@@ -1,2 +1,2 @@
 # BSBO
-Extension für Chruchtools Wettbewerb
+Extension für Churchtools Wettbewerb
