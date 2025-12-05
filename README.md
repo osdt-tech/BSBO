@@ -9,10 +9,15 @@ Sie wird u. a. von Dozenten und Administratoren zur Pflege von Lehr‑ und Stu
 Die Komponente bietet folgende Funktionen:
 
 💾 Laden, Speichern und Löschen von Aufgaben im KV‑Store
+
 📋 Kategorisierte Darstellung nach Typ oder Monat
+
 🧮 Status‑ und Notenverwaltung mit automatischer Notenberechnung
+
 ➕ Neue Aufgabe anlegen über ein separates Formular (<TaskCreateForm>)
+
 🧩 Verteilung an Gruppen über initKvStore
+
 🔍 Rohdaten‑Ansicht zur Kontrolle der geladenen ChurchTools‑Daten
 
 Die Komponente setzt folgende Module und Hilfsfunktionen voraus:
