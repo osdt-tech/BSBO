@@ -6,19 +6,20 @@ Diese Vue‑Komponente dient der Verwaltung, Anzeige und Verteilung von Aufgaben
 Sie wird u. a. von Dozenten und Administratoren zur Pflege von Lehr‑ und Studienaufgaben genutzt.
 
 ⚙️ Funktionsübersicht
+
 Die Komponente bietet folgende Funktionen:
 
-💾 Laden, Speichern und Löschen von Aufgaben im KV‑Store
+  💾 Laden, Speichern und Löschen von Aufgaben im KV‑Store
 
-📋 Kategorisierte Darstellung nach Typ oder Monat
+  📋 Kategorisierte Darstellung nach Typ oder Monat
 
-🧮 Status‑ und Notenverwaltung mit automatischer Notenberechnung
+  🧮 Status‑ und Notenverwaltung mit automatischer Notenberechnung
 
-➕ Neue Aufgabe anlegen über ein separates Formular (<TaskCreateForm>)
+  ➕ Neue Aufgabe anlegen über ein separates Formular (<TaskCreateForm>)
 
-🧩 Verteilung an Gruppen über initKvStore
+  🧩 Verteilung an Gruppen über initKvStore
 
-🔍 Rohdaten‑Ansicht zur Kontrolle der geladenen ChurchTools‑Daten
+  🔍 Rohdaten‑Ansicht zur Kontrolle der geladenen ChurchTools‑Daten
 
 Die Komponente setzt folgende Module und Hilfsfunktionen voraus:
 
