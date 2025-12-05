@@ -5,14 +5,16 @@ Extension für Churchtools Wettbewerb
 Diese Vue‑Komponente dient der Verwaltung, Anzeige und Verteilung von Aufgaben aus dem ChurchTools‑KV‑Store.
 Sie wird u. a. von Dozenten und Administratoren zur Pflege von Lehr‑ und Studienaufgaben genutzt.
 
-⚙️ Funktionsübersicht
+⚙️ Funktionsübersicht
+Die Komponente bietet folgende Funktionen:
+
 💾 Laden, Speichern und Löschen von Aufgaben im KV‑Store
 📋 Kategorisierte Darstellung nach Typ oder Monat
-🧮 Status‑ und Notenverwaltung mit automatischer Notenanzeige
+🧮 Status‑ und Notenverwaltung mit automatischer Notenberechnung
 ➕ Neue Aufgabe anlegen über ein separates Formular (<TaskCreateForm>)
 🧩 Verteilung an Gruppen über initKvStore
-⚙️ Rohdaten‑Ansicht (zur Debug‑Kontrolle der geladenen ChurchTools‑Daten)
-🧩 Abhängigkeiten und benötigte Dateien
+🔍 Rohdaten‑Ansicht zur Kontrolle der geladenen ChurchTools‑Daten
+
 Die Komponente setzt folgende Module und Hilfsfunktionen voraus:
 
 Tabelle
