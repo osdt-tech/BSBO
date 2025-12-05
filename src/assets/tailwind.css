@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+
+.btn-base {
+  @apply flex items-center justify-center sm:justify-start gap-2
+         px-4 py-2 h-10 rounded-md text-sm font-medium text-black
+         shadow-md transition leading-none;
+}
+
+/* 🌈 Pastellfarben */
+.btn-green   { @apply bg-pastel-green hover:bg-[#81C784]; }
+.btn-blue    { @apply bg-pastel-blue hover:bg-[#64B5F6]; }
+.btn-cyan    { @apply bg-pastel-cyan hover:bg-[#4DD0E1]; }
+.btn-yellow  { @apply bg-pastel-yellow hover:bg-[#FFF176]; }
+.btn-orange  { @apply bg-pastel-orange hover:bg-[#FFB74D]; }
+.btn-red     { @apply bg-pastel-red hover:bg-[#E57373]; }
+.btn-pink    { @apply bg-pastel-pink hover:bg-[#F06292]; }
+.btn-purple  { @apply bg-pastel-purple hover:bg-[#BA68C8]; }
+.btn-gray    { @apply bg-pastel-gray hover:bg-[#B0BEC5]; }
+.btn-brown   { @apply bg-pastel-brown hover:bg-[#A1887F]; }
+.btn-mint    { @apply bg-pastel-mint hover:bg-[#80CBC4]; }
+.btn-sand    { @apply bg-pastel-sand hover:bg-[#FFCC80]; }
+
+}
