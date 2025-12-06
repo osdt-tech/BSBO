@@ -1,144 +1,216 @@
-# BSBO
-Extension für Churchtools Wettbewerb
+# 📋 BSBO – Aufgabenverwaltung für ChurchTools
 
-📘 Aufgaben‑Verwaltung – Bibelseminar Bad Oeynhausen
-Diese Vue‑Komponente dient der Verwaltung, Anzeige und Verteilung von Aufgaben aus dem ChurchTools‑KV‑Store.
-Sie wird u. a. von Dozenten und Administratoren zur Pflege von Lehr‑ und Studienaufgaben genutzt.
+Eine moderne Vue 3 + TypeScript-Anwendung zur Verwaltung und Verteilung von Aufgaben im ChurchTools-Ökosystem. Administratoren können Aufgaben erstellen, kategorisieren, verteilen und verwalten; Teilnehmer können ihre zugewiesenen Aufgaben einsehen und deren Status aktualisieren.
 
-⚙️ Funktionsübersicht
+---
 
-Die Komponente bietet folgende Funktionen:
+## ✨ Hauptfunktionen
 
-  💾 Laden, Speichern und Löschen von Aufgaben im KV‑Store
+### 👤 Für Administratoren
+- ✅ Aufgaben erstellen, bearbeiten und löschen
+- 📤 Aufgaben an mehrere Gruppen gleichzeitig verteilen
+- 📊 Status und Noten verwalten (automatische Notenberechnung)
+- 🔍 Rohdaten und Verteilungsprotokoll anzeigen
+- 💾 Alle Daten persistent im ChurchTools-KV-Store speichern
 
-  📋 Kategorisierte Darstellung nach Typ oder Monat
+### 👥 Für Teilnehmer
+- 📖 Alle zugewiesenen Aufgaben einsehen
+- 🏷️ Aufgaben nach Kategorie oder Monat filtern
+- 📅 Aktuelle und überfällige Aufgaben unterscheiden
+- 📝 Status aktualisieren (z. B. „teilgenommen", „erfüllt")
 
-  🧮 Status‑ und Notenverwaltung mit automatischer Notenberechnung
+---
 
-  ➕ Neue Aufgabe anlegen über ein separates Formular (<TaskCreateForm>)
+## 🚀 Installation & Einrichtung
 
-  🧩 Verteilung an Gruppen über initKvStore
+### Voraussetzungen
+- ChurchTools-Instanz mit API-Zugriff
+- Benutzer mit Admin-Rechten (für Einrichtung)
+- Zugriffsrechte auf:
+  - Custom Data Values (KV-Store) im eigenen Modul
+  - Gruppen und Gruppenmitglieder
+  - Personendaten (`/whoami`, `/persons/{id}/groups`)
 
-  🔍 Rohdaten‑Ansicht zur Kontrolle der geladenen ChurchTools‑Daten
+### 1. Modul registrieren
+Die App erstellt automatisch beim ersten Start:
+- Ein Custom Module mit dem Namen `BSBO` (oder deinem KEY)
+- Eine Datenkategorie `bsbo-aufgaben` (oder `{KEY}-aufgaben`)
 
-Die Komponente setzt folgende Module und Hilfsfunktionen voraus:
+Keine manuelle Einrichtung im KV-Store nötig!
 
-Tabelle
+### 2. Gruppen-IDs konfigurieren
+In `src/composables/usePermissions.ts` passen Sie die Gruppen-IDs an Ihre Struktur an:
 
+```typescript
+const ADMINISTRATION_GROUP_ID = '569'       // Administratoren-Gruppe
+const TEILNEHMER_PARENT_GROUP_ID = '566'    // Hauptgruppe der Teilnehmer
+```
 
-🧩 Abhängigkeiten und Module
-Erforderliche Dateien und ihre Aufgaben:
+Diese IDs finden Sie in ChurchTools unter: **Gruppen** → Gruppen-ID (rechts im Reiter).
 
-utils/kv-store.ts
-→ Zugriff auf den ChurchTools‑KV‑Store (lesen, schreiben, löschen)
+### 3. Environment-Variablen (optional, für Entwicklung)
+Kopieren Sie `.env.example` zu `.env` und füllen Sie aus:
 
-composables/useModule.ts
-→ Stellt useKvStore bereit (Modul‑ und Kategoriebestimmung)
+```env
+VITE_BASE_URL=https://your-churchtools-instance.de
+VITE_KEY=BSBO
+VITE_USERNAME=admin@example.com
+VITE_PASSWORD=your-password
+```
 
-composables/usePermissions.ts
-→ Prüft Benutzerrechte (canSeeAdminFeatures)
+**Für Produktion:** Diese Variablen werden automatisch aus der ChurchTools-Umgebung geladen.
 
-utils/fetchChurchToolsData.ts
-→ Lädt Personendaten aus ChurchTools
+---
 
-utils/fetchGroupChildren.ts
-→ Lädt Gruppen für die Aufgabenverteilung
+## 📖 Benutzerhandbuch
 
-data/initKvStore.ts
-→ Verteilt Aufgaben an ausgewählte Gruppen
+### Aufgabe erstellen (Admin)
+1. Klick auf **„Neue Aufgabe anlegen"**
+2. Ausfüllen:
+   - **Titel**: Beschreibung der Aufgabe
+   - **Kategorie**: TEST, Aufgaben, Vorlesung, etc.
+   - **Abgabedatum**: Deadline
+   - **Anwendungsbereich**: TEST, optional, etc.
+3. Speichern → Aufgabe erscheint in der Liste
 
-components/TaskCreateForm.vue
-→ Formular zum Erstellen neuer Aufgaben
+### Aufgabe verteilen (Admin)
+1. Aufgabe anklicken
+2. Im Bereich **„Verteilen an Gruppen"**:
+   - Dropdown öffnen
+   - Gewünschte Jahrgänge/Gruppen wählen (z. B. Jahrgang 2024, 2025)
+3. Klick auf **„Aufgabe verteilen"**
+   - Die Aufgabe wird an alle Gruppenmitglieder weitergegeben
+   - Info zeigt: Zeitstempel und Anzahl Empfänger
 
-components/UploadJson.vue(optional)
-→ Ermöglicht JSON‑Import von Aufgaben
+### Aufgabe bearbeiten
+1. **Status ändern**: Dropdown im Feld „Status" auswählen
+   - Note wird automatisch berechnet
+2. **Speichern**: Button oben rechts → ✅ Bestätigung
+3. **Löschen**: Rotes Kreuz-Symbol am Ende der Aufgabe
 
-🧠 Voraussetzungen
-Läuft innerhalb eines ChurchTools‑Moduls oder Plugins
-Der eingeloggte Benutzer wird als Prop user (Typ Person) übergeben
-Optional: Prop KEY (API‑/Modul‑Key) für KV‑Store‑Zugriff
-Schreib‑ und Leserechte auf die ChurchTools‑APIs müssen eingerichtet sein
-🔐 Zugriffsrechte
-Nur Benutzer mit Admin‑Rechten (canSeeAdminFeatures) sehen zusätzliche Funktionen:
+### Als Teilnehmer (nach Anmeldung)
+- Ihre zugewiesenen Aufgaben erscheinen automatisch
+- Filtern nach **Alle**, **Aktuell**, oder **Kategorie**
+- Status aktualisieren (nur Lesezugriff, Admin speichert)
 
-Rohdaten anzeigen
-Speichern
-Neue Aufgabe anlegen
-Aufgabe verteilen
-Löschen
-Nur Benutzer mit Admin‑Rechten (canSeeAdminFeatures) sehen diese zusätzlichen Funktionen:
+---
 
-🧾 Rohdaten anzeigen
-💾 Speichern
-➕ Neue Aufgabe anlegen
-📤 Aufgabe verteilen
-🗑️ Löschen
+## ⚙️ Technische Details
 
-»Rohdaten anzeigen«
-»Speichern«
-»Neue Aufgabe anlegen«
-»Aufgabe verteilen«
-»Löschen«
-🚀 Nutzung / Ablauf
-Initiales Laden
+### Dateistruktur
+```
+src/
+├── components/tasks/
+│   ├── TasksPage.vue          # Hauptseite (Admin & Teilnehmer)
+│   ├── TaskList.vue           # Aufgabenliste mit Filterung
+│   ├── TaskCard.vue           # Einzelne Aufgabenkarte
+│   ├── TaskCreateForm.vue     # Formular zum Erstellen
+│   ├── TaskHeader.vue         # Top-Navigation
+│   └── RawDataModal.vue       # Rohdaten-Debugger
+├── composables/
+│   ├── useModule.ts           # KV-Store & Modul-Zugang
+│   ├── useCreateTask.ts       # Task-Erstellung
+│   └── usePermissions.ts      # Admin-Rechte & Gruppen
+├── utils/
+│   ├── kv-store.ts            # KV-Store API-Wrapper
+│   ├── ct-types.d.ts          # TypeScript-Typen (ChurchTools)
+│   ├── fetchChurchToolsData.ts # API-Abfragen
+│   └── fetchGroupChildren.ts  # Gruppen-Hierarchie
+└── data/
+    └── initKvStore.ts         # Verteil-Logik
+```
 
-Beim Mounten werden Daten über loadAufgabeFromStore() geladen.
-Aufgaben werden nach Kategorie bzw. Abgabedatum gefiltert und sortiert.
-Aufgaben anlegen
+### Abhängigkeiten
+- **Vue 3** + **TypeScript** + **Composition API**
+- **Tailwind CSS** für Styling
+- **Vite** als Build-Tool
+- **ChurchTools Client** (`@churchtools/churchtools-client`)
+- **Material Design Icons** (MDI) via CDN
 
-Über den Button »Neue Aufgabe anlegen« öffnet sich ein Formular (TaskCreateForm).
-Nach dem Speichern wird die Aufgabe automatisch neu geladen.
-Status und Note
+### API-Endpunkte (verwendet)
+```
+GET   /whoami                           # Benutzer-Info
+GET   /persons/{id}/groups              # Benutzer-Gruppen
+GET   /groups/{id}/children             # Untergruppen
+GET   /groups/{id}/members              # Gruppenmitglieder
+GET   /custommodules                    # Module auflisten
+POST  /custommodules                    # Modul erstellen
+GET   /custommodules/{id}/customdatacategories
+POST  /custommodules/{id}/customdatacategories
+GET   /custommodules/{id}/customdatacategories/{catId}/customdatavalues
+POST  /custommodules/{id}/customdatacategories/{catId}/customdatavalues
+PUT   /custommodules/{id}/customdatacategories/{catId}/customdatavalues/{valId}
+```
 
-Der Status (z. B. teilgenommen, nicht erfüllt, Note 1 – 4) kann direkt in der Liste geändert werden.
-Die Note wird automatisch berechnet.
-Verteilen an Gruppen
+---
 
-Dropdown öffnen → Gruppen auswählen → »Aufgabe verteilen« klicken.
-Die Aufgaben werden über initKvStore an alle Gruppenmitglieder verteilt.
-Metadaten wie Zeitpunkt und Gruppen werden gespeichert.
-Löschen
+## 🔧 Fehlerbehebung
 
-Einzelne Aufgaben oder komplette Kategorie »aufgaben« können gelöscht werden.
-⚒️ Einrichtungsschritte / ToDo
-KEY übergeben:
-Die Komponente benötigt den Modul‑/API‑KEY für den ChurchTools‑KV‑Store.
-vue
+### „Fehler beim Laden der Daten"
+**Ursache:** Keine Berechtigung auf KV-Store oder fehlende Kategorie.
 
-Kopieren
-<AufgabenView :user="currentUser" KEY="meinModuleKey" />
-ChurchTools‑API einrichten:
-Zugriff auf getCustomDataValues, createCustomDataValue usw. sicherstellen.
+**Lösung:**
+1. Eingeloggt als Admin?
+2. Button **„Kategorie ‹aufgaben› löschen"** (unten) → löscht alte Daten
+3. Seite neu laden → Kategorie wird automatisch neu erstellt
 
-Gruppen‑ID prüfen:
-In fetchGroupChildren('566') die ID deiner Hauptgruppe anpassen:
+### Aufgabe wird nicht angezeigt
+**Ursache:** Kategorie-Shorty stimmt nicht überein oder falsche Gruppen-ID.
 
-ts
+**Lösung:**
+1. Inspiziert die Browser-Console (F12 → Console)
+2. Prüft: `Module bsbo found:` und Kategorie-Info
+3. Passt `TEILNEHMER_PARENT_GROUP_ID` in `usePermissions.ts` an
 
-Kopieren
-gruppenOptions.value = await fetchGroupChildren('DEINE_GRUPPEN_ID')
-KV‑Kategorie sicherstellen:
-Im ChurchTools‑Modul muss die Kategorie »aufgaben« angelegt oder automatisch erstellt werden.
+### Dropdown wird abgeschnitten
+**Bereits behoben:** Overflow entfernt, Dropdown sollte vollständig sichtbar sein.
 
-Optional:
-Testdaten über UploadJson.vue importieren (falls vorhanden).
+### Teilnehmer sehen verteilte Aufgaben nicht
+**Ursache:** Falsche Rollen-IDs oder Gruppenmitgliedschaft.
 
-🪄 Fehlerbehebung
-Wenn beim Laden ein Fehler angezeigt wird:
+**Lösung:**
+1. Teilnehmer muss in der korrekten Gruppe (z. B. Jahrgang 2024) sein
+2. Admin-Console prüfen: Ist die Person als Teilnehmer eingetragen?
+3. Nötigenfalls `GROUP_TYPE_ROLE_ID` in `usePermissions.ts` anpassen
 
-Über den roten Button »Kategorie ‹aufgaben› löschen« kann die komplette Kategorie im KV‑Store gelöscht (zurückgesetzt) werden.
-Danach wird sie beim nächsten Speichern automatisch neu angelegt.
-📄 Props
-Tabelle
+---
 
+## 📦 Entwicklung & Deployment
 
-Property	Typ	Beschreibung
-user	Person	Der aktuell eingeloggte Benutzer
-KEY	string(optional)	API-/Modul‑Key zur Identifikation des KV‑Stores
-💬 Hinweise für Entwickler
-Die Komponente nutzt Composition API (<script setup lang="ts">).
-Daten werden vollständig reaktiv über ref() und computed() verwaltet.
-Beim Statuswechsel wird updateTaskStatus() aufgerufen, was direkt in den KV‑Store schreibt.
-onMounted() lädt automatisch Aufgaben, Rohdaten und Gruppen.
-📍 Ziel:
-Eine zuverlässige Vue‑Verwaltung für Aufgaben innerhalb des ChurchTools‑Ökosystems, die einfach gepflegt und erweitert werden kann.
+### Dev-Server starten
+```bash
+npm install
+npm run dev
+```
+
+### Build für Produktion
+```bash
+npm run build
+```
+
+### Deploy zu ChurchTools-Erweiterung
+```bash
+npm run deploy
+```
+
+---
+
+## 🔐 Sicherheit & Datenschutz
+
+- ✅ Alle Daten speichern im ChurchTools-KV-Store (nicht extern)
+- ✅ Authentifizierung über ChurchTools-Session
+- ✅ Admin-Rechte werden serverseitig geprüft (Gruppen-Rollen)
+- ✅ HTTPS-only Kommunikation mit ChurchTools-API
+
+---
+
+## 📞 Support & Beitragen
+
+Falls Bugs oder Verbesserungen anfallen:
+1. Öffnet ein **Issue** im Repository
+2. Mit Details: Schritte zum Reproduzieren + Browser-Console-Fehler
+3. Gerne auch Pull Requests willkommen!
+
+---
+
+**Version:** 1.0.0 | **Letztes Update:** Dezember 2025 | **Lizenz:** MIT
