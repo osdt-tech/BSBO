@@ -2,6 +2,8 @@
 
 Eine moderne Vue 3 + TypeScript-Anwendung zur Verwaltung und Verteilung von Aufgaben im ChurchTools-Ökosystem. Administratoren können Aufgaben erstellen, kategorisieren, verteilen und verwalten; Teilnehmer können ihre zugewiesenen Aufgaben einsehen und deren Status aktualisieren.
 
+Anmeldung zum Seminar hier: https://bsbo.notion.site/
+
 ---
 
 ## ✨ Hauptfunktionen
