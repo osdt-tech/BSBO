@@ -219,10 +219,15 @@ export async function getCustomDataValues<T extends object>(
     return values.map((val) => {
         const { value, ...rest } = val;
 
+        // 🚧 Manche Datensätze können ein leeres/null "value" haben – statt zu crashen, warnen und liefern Fallback.
         if (value == null) {
-            throw new Error(
-                `Custom data value ${val.id} has null or undefined 'value' field.`,
+            console.warn(
+                `Custom data value ${val.id} has null or undefined 'value' field. Returning empty fallback instead of throwing.`,
             );
+            return {
+                ...rest,
+                value: null,
+            } as unknown as T & Omit<CustomModuleDataValue, "value">;
         }
 
         let parsedData = safeParseJSON(value, {} as T);

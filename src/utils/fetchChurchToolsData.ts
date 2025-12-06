@@ -20,13 +20,19 @@ export async function fetchChurchToolsData() {
      { key: 'groups_children', url: '/groups/566/children', info: 'Geladen von /groups/{groupId}/children' },
   ]
 
-  // 1️⃣ alle Requests parallel starten
-  const results = await Promise.all(endpoints.map(e => churchtoolsClient.get<any>(e.url)))
+  // 1️⃣ alle Requests parallel starten, Fehler pro Endpoint abfangen
+  const results = await Promise.allSettled(endpoints.map(e => churchtoolsClient.get<any>(e.url)))
 
   // 2️⃣ Daten aufbereiten
   const rawDataMap = Object.fromEntries(
     endpoints.map((e, i) => {
-      let data = results[i]
+      const res = results[i]
+      if (res.status === 'rejected') {
+        console.warn(`[fetchChurchToolsData] ${e.url} fehlgeschlagen:`, res.reason)
+        return [e.key, { info: e.info, data: null, error: true }]
+      }
+
+      let data = res.value
 
       // 👉 beim Key 'persons' gezielt filtern
       if (e.key === 'persons' && Array.isArray(data)) {
@@ -37,7 +43,7 @@ export async function fetchChurchToolsData() {
         )
       }
 
-      return [e.key, { info: e.info, data }]
+      return [e.key, { info: e.info, data, error: false }]
     })
   )
 

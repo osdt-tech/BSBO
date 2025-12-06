@@ -123,11 +123,12 @@ export async function getAllTeilnehmer(groupIdsToUse?: string[]): Promise<any[]>
       const res = await churchtoolsClient.get<any>(`/groups/${gid}/members`)
 
       const members = Array.isArray(res)
-        ? res.filter(
-            (m: any) =>
-              m.groupTypeRoleId === GROUP_TYPE_ROLE_ID &&
-              m.personId
-          )
+        ? res.filter((m: any) => {
+            // Einige Instanzen nutzen unterschiedliche Rollen-IDs für Teilnehmer; akzeptiere bekannte IDs sowie Fallback auf „hat personId“
+            const roleId = m.groupTypeRoleId
+            const isKnownTeilnehmer = roleId === GROUP_TYPE_ROLE_ID || roleId === TEILNEHMER_ROLE_ID
+            return m.personId && (isKnownTeilnehmer || roleId == null)
+          })
         : []
 
       log(`➡️ ${members.length} Mitglieder in Gruppe ${gid}`)

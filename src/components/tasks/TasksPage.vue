@@ -24,7 +24,8 @@
       <TaskList :tasks="gefilterteAufgaben" :kategorien="kategorien" :aktivKategorie="aktiveKategorie"
         :visibleColumns="aktiveSpalten" :statusOptions="statusOptions" :canSeeAdminFeatures="canSeeAdminFeatures"
         :gruppenOptions="gruppenOptions" :selectedGroups="aufgabenGruppen" :openDropdown="showGroupDropdown"
-        :verteilInfo="verteilInfo" :hasError="hasError" :gruppierteAufgaben="gruppierteAufgaben"
+        :verteilInfo="verteilInfo" :hasError="hasError" :errorReason="errorReason"
+        :gruppierteAufgaben="gruppierteAufgaben"
         @category-change="aktiveKategorie = $event" @task-status-change="updateStatusValue"
         @task-toggle-dropdown="toggleDropdown" @task-group-selected="handleGroupSelected"
         @task-distribute="verteileAufgabe" @task-delete="deleteTask" @delete-all-data="deleteAllData" />
@@ -65,6 +66,7 @@ const { canSeeAdminFeatures } = usePermissions(props.user)
 const showCreateForm = ref(false)
 const saveMessage = ref('')
 const hasError = ref(false)
+const errorReason = ref('')
 const showRawDataModal = ref(false)
 
 // Daten
@@ -260,8 +262,11 @@ async function saveAufgabeToStore() {
 async function loadAufgabeFromStore() {
   try {
     hasError.value = false
+    errorReason.value = ''
     const { module, category } = await useKvStore(props.KEY)
     if (!category) {
+      errorReason.value = 'Keine Berechtigung oder Kategorie nicht vorhanden.'
+      hasError.value = true
       aufgabeData.value = []
       return
     }
@@ -292,8 +297,9 @@ async function loadAufgabeFromStore() {
 
     const alleKategorien = [...new Set(aufgabeData.value.map((a) => a.properties['Kategorie']?.select?.name).filter(Boolean))]
     kategorien.value = ['Alle', 'Aktuell', ...alleKategorien]
-  } catch (err) {
+  } catch (err: any) {
     hasError.value = true
+    errorReason.value = err?.message || 'Unbekannter Fehler beim Laden.'
     console.error('❌ Fehler beim Laden aus KV-Store:', err)
   }
 }
@@ -392,7 +398,14 @@ onMounted(async () => {
   try {
     await loadAufgabeFromStore()
     rawData.value = await fetchChurchToolsData()
-    gruppenOptions.value = await fetchGroupChildren('566')
+    const loadedGroups = await fetchGroupChildren('566')
+    // Fallback, falls der Endpoint nichts (z. B. wegen fehlender Rechte) liefert
+    gruppenOptions.value = loadedGroups.length
+      ? loadedGroups
+      : [
+          { title: 'Jahrgang 2024', domainIdentifier: '572' },
+          { title: 'Jahrgang 2025', domainIdentifier: '573' },
+        ]
     document.addEventListener('click', closeGroupDropdownOnOutsideClick)
   } catch (err) {
     console.error('❌ Fehler beim Laden der Daten:', err)
